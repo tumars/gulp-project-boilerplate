@@ -1,0 +1,38 @@
+<ul class="fund-list">
+    {{ each list as value i }}
+    <li class="fund-item">
+        <table class="fund-tbl" data-code="{{ value.FCODE }}" data-name="{{ value.SHORTNAME }}">
+            <tbody>
+                <tr>
+                    <td colspan="3" class="left">
+                        <h3 class="fund-title">
+                            <a class="fund-detail" href="{{ value.DETAILURL }}">{{ value.SHORTNAME }}<small>（{{ value.FCODE }}）</small></a>
+                        </h3>
+                        <!-- <p class="fund-qigou"><span class="arial">{{ value.MINSG }}</span>元起购</p> -->
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left col_1">
+                        <span class="profit-title">近3月</span>
+                        <b class="profit arial {{ value.SYL_3Y.toString().charAt(0) == '-' ? 'green' : 'red' }}">{{ value.SYL_3Y.toFixed(2) }}%</b>
+                    </td>
+                    <td class="left col_2">
+                        <span class="profit-title">购买手续费</span>
+                        <p class="profit arial">
+                            <del class="sourcerate">{{ value.SOURCERATE }}</del>&nbsp;
+                            <span class="rate">{{ value.RATE }}</span>
+                        </p>
+                    </td>
+                    <td class="col_3 fund-buy-wrap">
+                        <a href="{{ value.BUYURL }}" class="fund-buy">购买</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </li>
+    {{ /each }}
+</ul>
+<a href="{{#}}" class="seemore">查看更多&gt;</a>
+<div class="funds-info">
+    <p>数据来源：东方财富Choice 银河证券<br />截止日期：{{ list[0].FSRQ }}</p>
+</div>

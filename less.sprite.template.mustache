@@ -1,0 +1,19 @@
+{{#extend "less"}}
+{{#content "sprites"}}
+{{#each sprites}}
+@{{name}}: {
+	width: {{width}}/64rem;
+	height: {{height}}/64rem;
+    background-position: {{offset_x}}/({{width}}-{{total_width}})*100% {{offset_y}}/({{height}}-{{total_height}})*100%;
+};
+
+{{/each}}
+{{/content}}
+{{#content "spritesheet"}}
+.{{spritesheet.name}} {
+    background-image: url('{{{spritesheet.escaped_image}}}');
+    background-repeat: no-repeat;
+    background-size: {{spritesheet.width}}/64rem {{spritesheet.height}}/64rem;
+}
+{{/content}}
+{{/extend}}

@@ -1,0 +1,30 @@
+﻿//link other css file
+@import "modules/reset.less";
+@import "modules/variable.less";
+@import "modules/fund-list.less";
+@import "sprite.less";
+
+/* body */
+
+body {
+    position: relative;
+    line-height: 1.5;
+    font-size: 0.4375rem;
+    width: 320px;
+}
+
+.icon1 {
+	.spritesheet(@icon1)
+}
+.icon2 {
+	.spritesheet(@icon2);
+}
+.icon3 {
+	.spritesheet(@icon3);
+}
+
+
+// 使用 detached 规则集合
+// .top {
+//     @detached-ruleset(); 
+// }
