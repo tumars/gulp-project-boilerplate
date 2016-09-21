@@ -17,3 +17,21 @@ $(document).ready(function($) {
         calculate_size();
     }
 });
+
+
+
+var data1 = {
+    title: '标签一',
+    list: ['文艺', '博客', '摄影']
+};
+
+var data2 = {
+    title: '标签二',
+    list: ['香蕉', '苹果', '大梨']
+};
+
+var html1 = template('tpl1', data1)
+document.getElementById('list1').innerHTML = html1;
+
+var html2 = template('tpl2', data2)
+document.getElementById('list2').innerHTML = html2;

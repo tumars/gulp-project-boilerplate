@@ -1,4 +1,5 @@
-var gulp = require('gulp');
+var gulp = require('gulp'),
+    del = require('del');;
 
 var watch = require('gulp-watch'), 
     browserSync = require('browser-sync'), 
@@ -14,7 +15,8 @@ var watch = require('gulp-watch'),
     revCollector = require('gulp-rev-collector'),
     minifyHTML = require('gulp-minify-html'),
     usemin = require('gulp-usemin'),
-    imagemin = require('gulp-imagemin').
+    imagemin = require('gulp-imagemin'),
+    tmodjs = require('gulp-tmod'),
     rename = require('gulp-rename'),
     notify = require('gulp-notify'),
     path = require('path'); 
@@ -30,15 +32,19 @@ var rootPath = {
 var srcPath = {
     js: rootPath.src + '/js',
     lib: rootPath.src + '/js/lib',
+    libuild: rootPath.src + '/js/lib/build',
     images: rootPath.src + '/images',
     slice: rootPath.src + '/slice',
     sprite: rootPath.src + '/sprite',
     css: rootPath.src + '/css',
-    fonts: rootPath.src + '/fonts'
+    fonts: rootPath.src + '/fonts',
+    tpl: rootPath.src + '/tpl',
+    tplbuild: rootPath.src + '/tpl/build'
 }
 var distPath = {
     js: rootPath.dist + '/js',
     lib: rootPath.dist + '/js/lib',
+    libuild: rootPath.dist + '/js/lib/build',
     images: rootPath.dist + '/images',
     sprite: rootPath.dist + '/sprite',
     css: rootPath.dist + '/css',
@@ -51,7 +57,8 @@ var watchfile = {
     slice: srcPath.slice + '/*',
     less: srcPath.css + '/*.less',
     fonts: [srcPath.fonts + '/*', srcPath.fonts + '/**/*'],
-    html: rootPath.src + '/*.html',
+    tpl: srcPath.tpl + '/**/*.html',
+    html: rootPath.src + '/*.html'
 }
 var watchArr = []
 
@@ -70,18 +77,23 @@ gulp.task('browserSync', function() {
     })
 })
 
+//  删除 dist 文件夹
+gulp.task('cleanDist', function () {
+   var stream = del([rootPath.dist + '/**/*'])
+   return stream;
+});
 
-//合并 lib 
-gulp.task('mergelib', function() {
+
+//合并 lib
+gulp.task('mergeLib', function() {
     gulp.src(watchfile.lib)
         .pipe(concat('lib.js'))
-        .pipe(gulp.dest(srcPath.lib))
-        .pipe(gulp.dest(distPath.lib))
+        .pipe(gulp.dest(srcPath.libuild))
         .pipe(browserSync.reload({
             stream: true
         }))
         .pipe(notify({
-            message: 'mergelib task ok'
+            message: 'mergeLib task ok'
         }));
 });
 
@@ -122,52 +134,74 @@ gulp.task('sprite', function () {
   var cssStream = spriteData.css
     .pipe(gulp.dest(srcPath.css));
 
-  return merge(imgStream, cssStream);
+  return merge(imgStream, cssStream)
+        .pipe(notify({
+            message: 'sprite task ok'
+        }));
 });
 
 
-//合并 html 里 build 标签内 css、js, 并输出到 dist
-//延迟8秒，保证所需文件都已生成
-gulp.task('usemin', function () {
-    setTimeout(function() {
-        return gulp.src(watchfile.html)
+//编译合并模板文件并输出 template.js
+gulp.task('tpl', function(){
+    var stream = gulp.src(watchfile.tpl)
+            .pipe(tmodjs({
+                templateBase: srcPath.tpl
+            }))
+            .pipe(gulp.dest(srcPath.tplbuild))
+            .pipe(notify({
+                message: 'tpl task ok'
+            }));
+    return stream;
+});
+
+
+
+/*-------------------------------------------------------------------
+  打包与监听 
+-------------------------------------------------------------------*/
+
+//执行打包
+gulp.task('build', ['cleanDist'], function() {
+    //转移字体
+    var transferFont = gulp.src(watchfile.fonts)
+                    .pipe(gulp.dest(distPath.fonts));
+
+    //转移雪碧图
+    var transSprite = gulp.src(srcPath.sprite + '/**/*.*')
+                .pipe(gulp.dest(distPath.sprite));
+
+    //转移 lib.js
+    var transLib = gulp.src(srcPath.libuild + '/lib.js')
+                .pipe(gulp.dest(distPath.libuild));
+
+    //压缩并转移图片
+    var transferImg = gulp.src(watchfile.images)
+                .pipe(imagemin({
+                    progressive: true
+                }))
+                .pipe(gulp.dest(distPath.images));  
+
+    // 合并 html 里 build 标签内 css、js，压缩 html，并输出到 dist        
+    var useminHtml = gulp.src(watchfile.html)
             .pipe(usemin({
                 css: [ rev ],
                 html: [ function () {return minifyHTML({ empty: true });} ],
                 js: [ uglify, rev ]
             }))
             .pipe(gulp.dest(rootPath.dist))
-            .pipe(notify({
-                message: 'usemin task ok'
-            }));
-    }, 8000)
-});
 
+    return merge(transferFont, transSprite, transLib, transferImg, useminHtml)
+        .pipe(notify({
+            message: 'build task ok'
+        }));
 
-//将图片压缩并输出到 dist
-gulp.task('transferimg', function () {
-    return gulp.src(watchfile.images)
-        .pipe(imagemin({
-            progressive: true
-        }))
-        .pipe(gulp.dest(distPath.images))
-});
-
-
-//将 font 文件夹输出至 dist
-gulp.task('transferfont', function () {
-    return gulp.src(watchfile.fonts)
-        .pipe(gulp.dest(distPath.fonts))
-});
-
-
-//执行打包
-gulp.task('build', ['less', 'mergelib', 'transferfont', 'transferimg', 'usemin' ])
+})
 
 
 //监听文件变动
-gulp.task('watch', ['mergelib', 'sprite', 'browserSync'], function() {
+gulp.task('watch', ['mergeLib', 'tpl', 'sprite', 'browserSync'], function() {
     gulp.watch(watchfile.less, ['less']);
-    gulp.watch(watchfile.lib, ['mergelib']);
+    gulp.watch(watchfile.lib, ['mergeLib']);
+    gulp.watch(watchfile.tpl, ['tpl']);
     gulp.watch(watchfile.sprite, ['sprite']);
 })

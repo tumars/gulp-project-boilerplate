@@ -11,6 +11,7 @@
   "license": "ISC",
   "devDependencies": {
     "browser-sync": "^2.11.2",
+    "del": "^2.2.2",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
@@ -23,6 +24,7 @@
     "gulp-rev": "^7.1.2",
     "gulp-rev-collector": "^1.0.5",
     "gulp-sourcemaps": "^1.6.0",
+    "gulp-tmod": "^2.0.3",
     "gulp-uglify": "^1.5.3",
     "gulp-usemin": "^0.3.24",
     "gulp-watch": "^4.3.5",
