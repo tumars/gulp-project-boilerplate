@@ -9,7 +9,6 @@
  - 合成 CSS Sprite 雪碧图，并输出响应式 css （size 使用 rem，position 使用百分比）
  - artTemplate 风格模板，支持预编译、include、简洁语法
  - 识别合并依赖文件，输出去缓存文件 Reversion (MD5)，自动插入 HTML
- - artTemplate 模板，并使用 TmodJS 将模板预编译
  - Less -> CSS
  - CSS Autoprefixer 前缀自动补全
  - CSS 压缩 cssnano
@@ -75,7 +74,7 @@
 │ 								
 ├── less.sprite.template.mustache 	// gulp.spritesmith 的模板文件
 │
-└──project 						// 项目文件夹
+└──project 							// 项目文件夹
 	├── src 						// 开发目录，`gulp watch` 阶段会监听此目录下的部分文件变动
 	│	├── css 					// 存放 Less 文件的目录，只有 main.less 会被编译
 	│	│	├── modules 			// less 模块文件夹，包含 reset.less 、 variable.less  等 
@@ -86,7 +85,6 @@
 	│	├── images
 	│	├── js
 	│	│	├── lib 				// js 类库文件夹，会合并输出 lib.js
-	│	│	├── tplbuild 			//  网页 template 文件合并预编译后的输出文件夹
 	│	│	├── base.js 
 	│	│	└── a.js, b.js, c.js
 	│	│	
@@ -94,6 +92,8 @@
 	│	├── slice 					// 切片图片素材，将会进行雪碧图合并
 	│	├── sprite 					// 雪碧图图合并后的输出文件夹
 	│	├── tpl 					// 网页 template 模板文件夹
+	│	│	├── build				// 合并编译好的模板会放入这个文件夹 
+	│	│	├── public				// 公用模板文件夹，可通过 include 引用
 	│	│	├── tpl1.html 						
 	│	│	└── tpl2.html
 	│	│
