@@ -4,7 +4,7 @@
   "description": "boilerplate of gulp project",
   "main": "gulpfile.js",
   "scripts": {
-    "build": "rm -rf ./tjcs/dist && gulp build",
+    "build": "gulp build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "tumars",
